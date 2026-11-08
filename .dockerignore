@@ -1,0 +1,9 @@
+.git
+.venv
+artifacts
+results
+report
+tests
+__pycache__
+*.safetensors
+*.tar.gz
