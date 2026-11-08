@@ -178,3 +178,9 @@ loadtest: $(PY)
 	mkdir -p results
 	$(VENV)/bin/locust -f tools/locustfile.py --headless --users 4 --spawn-rate 4 --run-time 2m \
 	  --host http://localhost:8080 --csv results/loadtest
+
+# ---- Report (needs pandoc and a LaTeX engine) ----
+report:
+	pandoc report/report.md -o report/report.pdf --pdf-engine=pdflatex
+
+.PHONY: report
