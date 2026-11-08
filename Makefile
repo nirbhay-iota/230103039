@@ -2,6 +2,8 @@ SHELL := /bin/bash
 CLUSTER := cc-mini
 VENV := .venv
 PY := $(VENV)/bin/python
+PYTHON ?= python3.11
+PDF_ENGINE ?= tectonic
 RUN ?= v1
 SUBSET ?=
 S3 = eval "$$(scripts/s3env.sh)" && $(PY) scripts/s3_tool.py
@@ -38,7 +40,7 @@ down:
 
 # ---- host Python environments ----
 $(PY): requirements-dev.txt
-	python3 -m venv $(VENV)
+	$(PYTHON) -m venv $(VENV)
 	$(PY) -m pip install -q -r requirements-dev.txt
 	@touch $(PY)
 
@@ -121,7 +123,7 @@ fetch-train: $(PY)
 	mkdir -p data/v1
 	$(S3) get datasets v1/train.jsonl data/v1/train.jsonl
 	$(S3) get datasets v1/train.sha256 data/v1/train.sha256
-	cd data/v1 && sha256sum -c train.sha256
+	cd data/v1 && shasum -a 256 -c train.sha256
 
 # One command, reads only training/config.yaml:  make train | make train RUN=v2 | make train SUBSET=50
 train: $(VENV)/.train-ready
@@ -181,6 +183,6 @@ loadtest: $(PY)
 
 # ---- Report (needs pandoc and a LaTeX engine) ----
 report:
-	pandoc report/report.md -o report/report.pdf --pdf-engine=pdflatex
+	pandoc report/report.md -o report/report.pdf --pdf-engine=$(PDF_ENGINE)
 
 .PHONY: report

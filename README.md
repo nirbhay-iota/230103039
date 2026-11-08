@@ -18,9 +18,15 @@ report/report.md            report source (build: make report)   AI_USE.md     u
 ```
 
 ## Requirements on the host
-Docker, k3d, kubectl, Python 3.11+, curl, openssl, make. For labelling: Ollama with `ollama pull phi3.5`,
+Docker, k3d, kubectl, Python 3.11, curl, openssl, make. The pinned PyTorch/NumPy versions require Python 3.11;
+`make setup` defaults to `python3.11` (override with `PYTHON=/path/to/python3.11`). For labelling: Ollama with `ollama pull phi3.5`,
 started as `OLLAMA_HOST=0.0.0.0 ollama serve` so that Pods can reach it. For releases: the GitHub CLI (`gh auth login`).
 Only free, open-source tools are used; no credentials are stored in the repository (see "Secrets").
+
+On macOS, install missing tools with `brew install python@3.11 k3d kubernetes-cli ollama gh gitleaks pandoc tectonic`
+and start Docker Desktop. Report generation uses Pandoc and Tectonic (`make report PDF_ENGINE=pdflatex` also works
+if a full LaTeX installation is available). The memory test uses the k3d Docker network and SeaweedFS NodePort 30333;
+it does not require enabling Docker Desktop host networking. The cluster's host port remains 8080.
 
 ## Build, deploy, test, tear down (from a fresh clone)
 ```bash

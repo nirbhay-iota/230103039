@@ -11,7 +11,7 @@ trap 'rm -rf "$work"' EXIT
 base="https://github.com/${REPO}/releases/download/model-${RUN}"
 curl -fsSL -o "$work/model-${RUN}.tar.gz" "$base/model-${RUN}.tar.gz"
 curl -fsSL -o "$work/model-${RUN}.sha256" "$base/model-${RUN}.sha256"
-(cd "$work" && sha256sum -c "model-${RUN}.sha256")
+(cd "$work" && shasum -a 256 -c "model-${RUN}.sha256")
 mkdir -p "$work/model"
 tar -xzf "$work/model-${RUN}.tar.gz" -C "$work/model"
 cp "$work/model-${RUN}.sha256" "$work/model/model.sha256"

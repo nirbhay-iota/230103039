@@ -10,9 +10,9 @@ scripts/pf.sh start
 eval "$(scripts/s3env.sh)"
 
 docker rm -f cc-parser-memtest >/dev/null 2>&1 || true
-# --network host lets the container reach the port-forwarded object storage on localhost:8333.
-docker run -d --name cc-parser-memtest --network host --cpus=1 --memory=1g --memory-swap=1g \
-  -e MODEL_URI="s3://models/${RUN}/" -e MODEL_VERSION="${RUN}" -e S3_ENDPOINT="http://localhost:8333" \
+# Use the cluster network to reach S3 on both Linux and Docker Desktop.
+docker run -d --name cc-parser-memtest --network k3d-cc-mini -p 127.0.0.1:8000:8000 --cpus=1 --memory=1g --memory-swap=1g \
+  -e MODEL_URI="s3://models/${RUN}/" -e MODEL_VERSION="${RUN}" -e S3_ENDPOINT="http://k3d-cc-mini-server-0:30333" \
   -e MAX_NEW_TOKENS=96 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
   cc-parser:1.0 >/dev/null
 trap 'docker rm -f cc-parser-memtest >/dev/null 2>&1 || true' EXIT
@@ -29,15 +29,15 @@ curl -s -o /dev/null -w 'readyz: %{http_code}\n' localhost:8000/readyz | tee "$O
 sampler=$!
 
 ok=0
-mapfile -t texts < <(python3 -c "
+.venv/bin/python -c "
 import json
 for i, l in enumerate(open('data/validation.jsonl')):
-    if i < 50: print(json.loads(l)['text'])")
-for t in "${texts[@]}"; do
+    if i < 50: print(json.loads(l)['text'])" > "$OUT/memtest_commands.txt"
+while IFS= read -r t; do
   code=$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8000/parse -H 'Content-Type: application/json' \
          -d "$(python3 -c 'import json,sys;print(json.dumps({"text": sys.argv[1]}))' "$t")")
   [ "$code" = "200" ] && ok=$((ok + 1))
-done
+done < "$OUT/memtest_commands.txt"
 kill "$sampler" 2>/dev/null || true
 
 oom=$(docker inspect -f '{{.State.OOMKilled}}' cc-parser-memtest)
