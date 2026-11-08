@@ -1,5 +1,4 @@
 """Unit tests for Task 3: output validation and the model download filter."""
-import json
 import pathlib
 import sys
 

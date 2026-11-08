@@ -62,7 +62,7 @@ def test_loss_csv_has_one_row_per_epoch_and_replaces_old_run(tmp_path):
     train.update_loss_csv(path, "v1", [3.1, 2.1])  # re-run of v1 replaces its rows
     lines = path.read_text().splitlines()
     assert lines[0] == "run,epoch,train_loss"
-    assert [l.split(",")[:2] for l in lines[1:]] == [["v1", "1"], ["v1", "2"], ["v2", "1"], ["v2", "2"]]
+    assert [row.split(",")[:2] for row in lines[1:]] == [["v1", "1"], ["v1", "2"], ["v2", "1"], ["v2", "2"]]
 
 
 def test_package_is_deterministic_and_checksum_file_matches(tmp_path):

@@ -1,0 +1,10 @@
+# Default gitleaks rules plus an allowlist for the public dataset file and example values.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "dataset text and checksums are not secrets"
+paths = [
+  '''data/.*\.jsonl''',
+  '''.*\.sha256''',
+]
