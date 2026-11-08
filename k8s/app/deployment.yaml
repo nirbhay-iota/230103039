@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parser
+  namespace: app
+  labels: {app: parser}
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels: {app: parser}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # start a new Pod first ...
+      maxUnavailable: 0    # ... and never remove a Ready Pod until its replacement is Ready
+  template:
+    metadata:
+      labels: {app: parser}
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: parser
+          image: cc-parser:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: MODEL_URI
+              value: s3://models/v1/
+            - name: MODEL_VERSION
+              value: v1
+            - name: S3_ENDPOINT
+              value: http://seaweedfs.data.svc.cluster.local:8333
+            - name: MAX_NEW_TOKENS
+              value: "96"
+            - name: FAULT_INJECT
+              value: "0"
+          envFrom:
+            - secretRef:
+                name: s3-credentials   # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY, created by scripts/gen-secrets.sh
+          resources:
+            requests: {cpu: 500m, memory: 512Mi}
+            limits: {cpu: "1", memory: 1Gi}
+          livenessProbe:             # restart the container only if the process is stuck
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:            # receive traffic only once the model is loaded (503 before that)
+            httpGet: {path: /readyz, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            timeoutSeconds: 3
+            failureThreshold: 2
