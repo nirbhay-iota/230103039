@@ -1,0 +1,23 @@
+# secrets and local state - never commit
+.secrets/
+*.pem
+*.key
+.env
+kubeconfig*
+
+# model weights belong in object storage / GitHub Release, never in Git
+artifacts/
+*.safetensors
+*.bin
+*.pt
+*.tar.gz
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# scratch
+tmp/
