@@ -1,0 +1,8 @@
+# Host-side tooling (make setup). Pinned so a fresh clone behaves the same.
+boto3==1.35.36
+PyYAML==6.0.2
+jsonschema==4.23.0
+requests==2.32.3
+locust==2.31.8
+pytest==8.3.3
+ruff==0.6.9

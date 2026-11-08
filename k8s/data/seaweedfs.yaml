@@ -1,0 +1,66 @@
+# SeaweedFS (master + volume + filer + S3 gateway in one process) for object storage.
+# The S3 identity file comes from the Secret "seaweedfs-s3-config", which
+# scripts/gen-secrets.sh creates at deploy time. No credentials are stored in Git.
+apiVersion: v1
+kind: Service
+metadata:
+  name: seaweedfs
+  namespace: data
+  labels: {app: seaweedfs}
+spec:
+  selector: {app: seaweedfs}
+  ports:
+    - name: s3
+      port: 8333
+      targetPort: 8333
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: seaweedfs
+  namespace: data
+spec:
+  serviceName: seaweedfs
+  replicas: 1
+  selector:
+    matchLabels: {app: seaweedfs}
+  template:
+    metadata:
+      labels: {app: seaweedfs}
+    spec:
+      containers:
+        - name: seaweedfs
+          image: chrislusf/seaweedfs:3.80
+          args:
+            - server
+            - -dir=/data
+            - -master.volumeSizeLimitMB=256
+            - -volume.max=40
+            - -s3
+            - -s3.port=8333
+            - -s3.config=/etc/seaweedfs/s3.json
+          ports:
+            - containerPort: 8333
+              name: s3
+          readinessProbe:
+            tcpSocket: {port: 8333}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: "1", memory: 1Gi}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+            - {name: s3-config, mountPath: /etc/seaweedfs, readOnly: true}
+      volumes:
+        - name: s3-config
+          secret:
+            secretName: seaweedfs-s3-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: 5Gi
