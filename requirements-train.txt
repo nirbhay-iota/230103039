@@ -1,0 +1,11 @@
+# Training and evaluation on CPU. The extra index provides CPU-only PyTorch wheels (no CUDA libraries).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1
+transformers==4.44.2
+tokenizers==0.19.1
+safetensors==0.4.5
+huggingface-hub==0.25.2
+numpy==1.26.4
+PyYAML==6.0.2
+requests==2.32.3
+boto3==1.35.36
