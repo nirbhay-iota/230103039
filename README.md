@@ -1,5 +1,7 @@
 # Cloud Computing mini project: distilling and deploying a command parser
 
+Nirbhay, Roll No. 230103039 (CS3081). Status: the full implementation is in the repository; the executed and not-executed parts are listed in `report/report.pdf` (Section 9) and `results/current_results.md`.
+
 A 70M-parameter student (EleutherAI/pythia-70m) is trained on the replies of a teacher (phi3.5 on Ollama)
 to turn a spoken command into `{"intent", "date", "time", "place"}` JSON, then served from a local
 Kubernetes cluster (k3d) with object storage (SeaweedFS). Assignment text: see the course handout;
@@ -14,7 +16,7 @@ training/                   config.yaml, train.py, package.py, evaluate.py, loss
 service/                    FastAPI service + Dockerfile         network/      subnets.md, nacl.json
 scripts/                    experiment and helper scripts        tests/        unit tests
 results/                    evidence: logs, score reports, Locust output
-report/report.md            report source (build: make report)   AI_USE.md     use of AI tools
+report/report.md            report source (build: make report)   report/report.pdf  submitted report
 ```
 
 ## Requirements on the host
