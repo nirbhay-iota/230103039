@@ -1,5 +1,10 @@
 # Evidence
 
+The results currently available are summarized in [current_results.md](current_results.md).
+`partial/summary.json` and `partial/train.*` contain calculations from **250 saved replies only**;
+they are not the completed dataset or validation results. The table below lists expected outputs,
+not a claim that every file exists.
+
 Everything here is produced by running the commands in the top-level README. Expected files:
 
 | File(s) | Produced by |
@@ -14,3 +19,5 @@ Everything here is produced by running the commands in the top-level README. Exp
 | `task4/` (rolling update, recovery, cold start, HPA, not-ready, load balancing) | `scripts/exp_*.sh` |
 | `loadtest_stats.csv`, `loadtest_headers.json` | `scripts/exp_loadbalance.sh` / `make loadtest` |
 | `cost_slo.md` | `python scripts/cost_slo.py` |
+| `partial/summary.json`, `partial/train.*` | `python scripts/summarize_existing_results.py` (offline, existing shards only) |
+| `setup/` | Saved setup, test, lint, secret-scan, and failed image-build logs |

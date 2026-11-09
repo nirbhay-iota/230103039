@@ -9,6 +9,12 @@ fontsize: 10pt
 > Run `python scripts/check_report.py` to list what is still open. Keep *measured* results and *assumptions* in separate
 > sentences (the sections below already label them).
 
+**Results snapshot, 9 November 2026.** Existing evidence records 36 passing unit tests, a passing Ruff check,
+a clean earlier secret scan, and 6/6 NACL sample decisions. Only 250 teacher replies were saved locally;
+their partial cleaning results are below. Model runs have been stopped at the user's request. No training,
+validation, service-performance, or load-test measurements are available. See `results/current_results.md`
+for the evidence inventory and configuration-based cost calculations. This remains an incomplete report.
+
 # 1. Architecture and decisions
 
 A single-node k3d cluster (`cluster/k3d.yaml`) runs three namespaces. **data**: SeaweedFS with buckets `datasets` and `models`.
@@ -36,14 +42,21 @@ Pod a completion index that is passed in as `SHARD_INDEX`. A worker flushes its 
 restart, so a crashed Pod loses little work. Assumption: the host runs one Ollama server, so two workers share its CPU and the speed-up
 is smaller than 2x; this is a property of one laptop, not of the method.
 
-*Counts* ([[MEASURE: from results/clean_counts.json]]); the identity input = (a)+(b)+(c)+(d)+duplicates+kept holds by construction.
+*Partial local counts* (`results/partial/summary.json`): the saved snapshot contains 125 replies per shard,
+250 of 3,000 commands (8.33%). These are not counts for the complete labelling run. The identity
+input = (a)+(b)+(c)+(d)+duplicates+kept holds: 250 = 126 + 0 + 1 + 11 + 0 + 112.
 
 | Input records | (a) not valid JSON | (b) wrong keys | (c) bad intent | (d) slot not in command | Duplicates | Kept |
 |---|---|---|---|---|---|---|
-| 3000 | [[MEASURE]] | [[MEASURE]] | [[MEASURE]] | [[MEASURE]] | [[MEASURE]] | [[MEASURE]] |
+| 250 (partial) | 126 | 0 | 1 | 11 | 0 | 112 |
 
 Each record is counted under the first rule it fails; duplicates are removed after validity filtering, keeping the smallest id.
-`train.sha256` = [[MEASURE: sha256 of datasets/v1/train.jsonl]]; re-running `clean.py` on the committed shards reproduces it.
+The partial cleaned output (`results/partial/train.jsonl`) has SHA-256
+`74c6e325f01a379e3ad33b206549f94c12e72166819dc7b0255711c34b7aef0f`.
+There are 124 JSON-parseable replies (49.6%) and 112 retained records (44.8%); these are partial-data
+cleaning statistics, not validation-set accuracy. Re-running `scripts/summarize_existing_results.py`
+reproduces the partial output. The local snapshot lacks 2,750 pool IDs. The full dataset checksum is
+[[MEASURE: sha256 of datasets/v1/train.jsonl after the full run is fetched and cleaned]].
 
 # 3. Task 2: training the student
 
@@ -125,9 +138,10 @@ lowest number up and the first match wins, so the deny for 198.51.100.0/24 must 
 # 7. Task 6: reproducibility, testing and CI/CD
 
 `make up` builds and deploys from a fresh clone in one command, `make down` deletes the cluster. The workflow `.github/workflows/ci.yml` has the stages
-lint, unit tests ([[MEASURE: number of tests]]), model evaluation from the Release asset, and the quality gate `score.py --min-validity 95`; a gitleaks job scans the history.
+lint, unit tests (36 passed locally in 1.48 seconds; `results/setup/tests_and_lint.txt`), model evaluation from the Release asset, and the quality gate `score.py --min-validity 95`; a gitleaks job scans the history.
 Failed run with the untrained Pythia-70M (gate working): [[MEASURE: link to the failed GitHub Actions run]]. Passing run with the trained model: [[MEASURE: link]].
-Secret scan result: [[MEASURE: nothing found]]. AI use is described in `AI_USE.md`.
+The saved local secret scan found no leaks across 13 commits (approximately 364,783 bytes);
+it predates the results-documentation changes and does not establish CI status. AI use is described in `AI_USE.md`.
 
 # 8. Task 7: performance, cost and review
 
@@ -136,6 +150,10 @@ throughput [[MEASURE]] req/s, error rate [[MEASURE]] %, cold start (median of th
 
 *Cost* (`scripts/cost_slo.py`, hypothetical rate card; assumption: billing by limits for every hour a replica runs): hourly cost = 2 x (1 vCPU x 3.50 + 1 GiB x 0.45) = 7.90;
 requests per hour = [[MEASURE]] x 3600 = [[MEASURE]]; cost per 1,000 requests = 7.90 / [[MEASURE]] x 1000 = [[MEASURE]] INR.
+
+The calculable configuration-based costs are INR 3.50 CPU + INR 0.45 memory = INR 3.95 per replica-hour,
+or INR 7.90 for two replicas. If measured throughput is `r` requests/s, cost per 1,000 requests is
+`2.194444 / r` INR. A numeric value needs the missing load-test results; no throughput is assumed.
 
 *SLO.* "99% of requests succeed (HTTP 200 within 30 s)", window: one load-test run. Error budget = 1% of [[MEASURE: total requests]] = [[MEASURE]] requests;
 failed requests [[MEASURE]], so [[MEASURE]]% of the budget was used.

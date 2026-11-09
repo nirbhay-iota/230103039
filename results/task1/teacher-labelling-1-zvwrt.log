@@ -1,0 +1,16 @@
+shard 1/2: 1500 commands, 1500 to label
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 1/4 in 2s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 2/4 in 4s
+shard 1: 25/1500 done
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 1/4 in 2s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 2/4 in 4s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 3/4 in 8s
+shard 1: 50/1500 done
+shard 1: 75/1500 done
+shard 1: 100/1500 done
+shard 1: 125/1500 done
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 1/4 in 2s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 1/4 in 2s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 2/4 in 4s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 3/4 in 8s
+teacher call failed (<urlopen error [Errno -3] Temporary failure in name resolution>); retry 4/4 in 16s

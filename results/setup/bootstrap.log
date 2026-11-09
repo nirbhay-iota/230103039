@@ -1,0 +1,206 @@
+k3d cluster list cc-mini >/dev/null 2>&1 || k3d cluster create --config cluster/k3d.yaml
+[36mINFO[0m[0000] Using config file cluster/k3d.yaml (k3d.io/v1alpha5#simple) 
+[36mINFO[0m[0000] portmapping '8080:80' targets the loadbalancer: defaulting to [servers:*:proxy agents:*:proxy] 
+[36mINFO[0m[0000] Prep: Network                                
+[36mINFO[0m[0000] Created network 'k3d-cc-mini'                
+[36mINFO[0m[0000] Created image volume k3d-cc-mini-images      
+[36mINFO[0m[0000] Starting new tools node...                   
+[36mINFO[0m[0001] Creating node 'k3d-cc-mini-server-0'         
+[36mINFO[0m[0002] Pulling image 'ghcr.io/k3d-io/k3d-tools:5.9.0' 
+[36mINFO[0m[0005] Pulling image 'docker.io/rancher/k3s:v1.35.5-k3s1' 
+[36mINFO[0m[0005] Starting node 'k3d-cc-mini-tools'            
+[36mINFO[0m[0037] Creating LoadBalancer 'k3d-cc-mini-serverlb' 
+[36mINFO[0m[0039] Pulling image 'ghcr.io/k3d-io/k3d-proxy:5.9.0' 
+[36mINFO[0m[0048] Using the k3d-tools node to gather environment information 
+[36mINFO[0m[0048] Starting new tools node...                   
+[36mINFO[0m[0048] Starting node 'k3d-cc-mini-tools'            
+[36mINFO[0m[0050] Starting cluster 'cc-mini'                   
+[36mINFO[0m[0050] Starting servers...                          
+[36mINFO[0m[0050] Starting node 'k3d-cc-mini-server-0'         
+[36mINFO[0m[0054] All agents already running.                  
+[36mINFO[0m[0054] Starting helpers...                          
+[36mINFO[0m[0054] Starting node 'k3d-cc-mini-serverlb'         
+[36mINFO[0m[0060] Injecting records for hostAliases (incl. host.k3d.internal) and for 3 network members into CoreDNS configmap... 
+[36mINFO[0m[0062] Cluster 'cc-mini' created successfully!      
+[36mINFO[0m[0062] You can now use it like this:                
+kubectl cluster-info
+kubectl config use-context k3d-cc-mini
+Switched to context "k3d-cc-mini".
+kubectl wait --for=condition=Ready node --all --timeout=120s
+node/k3d-cc-mini-server-0 condition met
+kubectl apply -f k8s/00-namespaces.yaml
+namespace/data created
+namespace/pipeline created
+namespace/app created
+scripts/gen-secrets.sh
+secret/seaweedfs-s3-config created
+secret/s3-credentials created
+secret/s3-credentials created
+created S3 secrets in namespaces data, pipeline and app
+kubectl apply -f k8s/data/seaweedfs.yaml
+service/seaweedfs created
+statefulset.apps/seaweedfs created
+kubectl -n data rollout status statefulset/seaweedfs --timeout=300s
+Waiting for statefulset spec update to be observed...
+Waiting for 1 pods to be ready...
+Waiting for 1 pods to be ready...
+partitioned roll out complete: 1 new pods have been updated...
+python3 -m venv .venv
+.venv/bin/python -m pip install -q -r requirements-dev.txt
+
+[notice] A new release of pip is available: 26.1 -> 26.3
+[notice] To update, run: /Users/nirbhay/Documents/230103039/.venv/bin/python -m pip install --upgrade pip
+scripts/pf.sh start
+eval "$(scripts/s3env.sh)" && .venv/bin/python scripts/s3_tool.py mb datasets models
+created bucket datasets
+created bucket models
+eval "$(scripts/s3env.sh)" && .venv/bin/python scripts/s3_tool.py put data/commands_pool.jsonl datasets commands_pool.jsonl
+uploaded data/commands_pool.jsonl -> s3://datasets/commands_pool.jsonl
+docker build -f worker/Dockerfile -t cc-worker:1.0 .
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 468B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.11.9-slim
+#2 DONE 2.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 117B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 19.65kB 0.0s done
+#4 DONE 0.0s
+
+#5 [1/7] FROM docker.io/library/python:3.11.9-slim@sha256:8fb099199b9f2d70342674bd9dbccd3ed03a258f26bbd1d556822c6dfc60c317
+#5 resolve docker.io/library/python:3.11.9-slim@sha256:8fb099199b9f2d70342674bd9dbccd3ed03a258f26bbd1d556822c6dfc60c317 0.0s done
+#5 sha256:fd14ce64cb6c65425fd74c63a783f174904d00d47faf7a8c58ab31a9963bffe6 0B / 3.21MB 0.2s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 0B / 12.84MB 0.3s
+#5 sha256:3bc0bb0f48368309a59f8f76a26a1a2aefa34ff474a1d5fc171b034e954d299b 0B / 3.33MB 0.2s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 0B / 29.16MB 0.2s
+#5 sha256:fd14ce64cb6c65425fd74c63a783f174904d00d47faf7a8c58ab31a9963bffe6 1.05MB / 3.21MB 1.4s
+#5 sha256:fd14ce64cb6c65425fd74c63a783f174904d00d47faf7a8c58ab31a9963bffe6 2.10MB / 3.21MB 1.8s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 1.05MB / 12.84MB 2.0s
+#5 sha256:fd14ce64cb6c65425fd74c63a783f174904d00d47faf7a8c58ab31a9963bffe6 3.21MB / 3.21MB 2.3s
+#5 sha256:fd14ce64cb6c65425fd74c63a783f174904d00d47faf7a8c58ab31a9963bffe6 3.21MB / 3.21MB 2.3s done
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 2.10MB / 12.84MB 2.6s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 3.15MB / 12.84MB 2.9s
+#5 sha256:3bc0bb0f48368309a59f8f76a26a1a2aefa34ff474a1d5fc171b034e954d299b 1.05MB / 3.33MB 2.9s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 4.19MB / 12.84MB 3.2s
+#5 sha256:3bc0bb0f48368309a59f8f76a26a1a2aefa34ff474a1d5fc171b034e954d299b 2.10MB / 3.33MB 3.2s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 2.10MB / 29.16MB 3.2s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 5.24MB / 12.84MB 3.5s
+#5 sha256:3bc0bb0f48368309a59f8f76a26a1a2aefa34ff474a1d5fc171b034e954d299b 3.33MB / 3.33MB 3.5s done
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 6.29MB / 12.84MB 3.8s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 4.19MB / 29.16MB 3.8s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 7.34MB / 12.84MB 4.1s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 8.39MB / 12.84MB 4.4s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 9.44MB / 12.84MB 4.7s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 6.29MB / 29.16MB 4.5s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 10.49MB / 12.84MB 4.8s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 11.53MB / 12.84MB 5.1s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 8.39MB / 29.16MB 5.1s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 12.58MB / 12.84MB 5.4s
+#5 sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 12.84MB / 12.84MB 5.4s done
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 10.49MB / 29.16MB 5.7s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 12.58MB / 29.16MB 6.3s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 14.68MB / 29.16MB 6.9s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 16.78MB / 29.16MB 7.5s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 18.87MB / 29.16MB 8.1s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 20.54MB / 29.16MB 8.7s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 22.02MB / 29.16MB 9.2s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 24.12MB / 29.16MB 9.9s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 26.21MB / 29.16MB 10.5s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 28.31MB / 29.16MB 11.3s
+#5 sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 29.16MB / 29.16MB 11.4s done
+#5 extracting sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda
+#5 extracting sha256:92c3b3500be621c72c7ac6432a9d8f731f145f4a1535361ffd3a304e55f7ccda 1.6s done
+#5 DONE 13.0s
+
+#5 [1/7] FROM docker.io/library/python:3.11.9-slim@sha256:8fb099199b9f2d70342674bd9dbccd3ed03a258f26bbd1d556822c6dfc60c317
+#5 extracting sha256:3bc0bb0f48368309a59f8f76a26a1a2aefa34ff474a1d5fc171b034e954d299b
+#5 extracting sha256:3bc0bb0f48368309a59f8f76a26a1a2aefa34ff474a1d5fc171b034e954d299b 0.2s done
+#5 DONE 13.2s
+
+#5 [1/7] FROM docker.io/library/python:3.11.9-slim@sha256:8fb099199b9f2d70342674bd9dbccd3ed03a258f26bbd1d556822c6dfc60c317
+#5 extracting sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328
+#5 extracting sha256:e1823f75652f532ba1658ed5515004b2d931722f3a68b2d8345aeee0d86db328 0.2s done
+#5 DONE 13.4s
+
+#5 [1/7] FROM docker.io/library/python:3.11.9-slim@sha256:8fb099199b9f2d70342674bd9dbccd3ed03a258f26bbd1d556822c6dfc60c317
+#5 extracting sha256:8fe47198239e7dba9d539471ccaa9128e12885f16f6eef5f89898eee1f5d3444 done
+#5 extracting sha256:fd14ce64cb6c65425fd74c63a783f174904d00d47faf7a8c58ab31a9963bffe6 0.1s done
+#5 DONE 13.5s
+
+#6 [2/7] WORKDIR /app
+#6 DONE 0.2s
+
+#7 [3/7] COPY worker/requirements.txt .
+#7 DONE 0.0s
+
+#8 [4/7] RUN pip install --no-cache-dir -r requirements.txt
+#8 2.795 Collecting boto3==1.35.36 (from -r requirements.txt (line 1))
+#8 3.313   Downloading boto3-1.35.36-py3-none-any.whl.metadata (6.7 kB)
+#8 3.918 Collecting botocore<1.36.0,>=1.35.36 (from boto3==1.35.36->-r requirements.txt (line 1))
+#8 3.987   Downloading botocore-1.35.99-py3-none-any.whl.metadata (5.7 kB)
+#8 4.118 Collecting jmespath<2.0.0,>=0.7.1 (from boto3==1.35.36->-r requirements.txt (line 1))
+#8 4.185   Downloading jmespath-1.1.0-py3-none-any.whl.metadata (7.6 kB)
+#8 4.285 Collecting s3transfer<0.11.0,>=0.10.0 (from boto3==1.35.36->-r requirements.txt (line 1))
+#8 4.376   Downloading s3transfer-0.10.4-py3-none-any.whl.metadata (1.7 kB)
+#8 4.465 Collecting python-dateutil<3.0.0,>=2.1 (from botocore<1.36.0,>=1.35.36->boto3==1.35.36->-r requirements.txt (line 1))
+#8 4.533   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#8 4.651 Collecting urllib3!=2.2.0,<3,>=1.25.4 (from botocore<1.36.0,>=1.35.36->boto3==1.35.36->-r requirements.txt (line 1))
+#8 4.736   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+#8 5.004 Collecting six>=1.5 (from python-dateutil<3.0.0,>=2.1->botocore<1.36.0,>=1.35.36->boto3==1.35.36->-r requirements.txt (line 1))
+#8 5.075   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#8 5.152 Downloading boto3-1.35.36-py3-none-any.whl (139 kB)
+#8 5.294    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 139.1/139.1 kB 1.1 MB/s eta 0:00:00
+#8 5.364 Downloading botocore-1.35.99-py3-none-any.whl (13.3 MB)
+#8 9.191    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 3.4 MB/s eta 0:00:00
+#8 9.279 Downloading jmespath-1.1.0-py3-none-any.whl (20 kB)
+#8 9.356 Downloading s3transfer-0.10.4-py3-none-any.whl (83 kB)
+#8 9.364    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.2/83.2 kB 24.4 MB/s eta 0:00:00
+#8 9.434 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#8 9.457    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 229.9/229.9 kB 11.5 MB/s eta 0:00:00
+#8 9.529 Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+#8 9.547    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.7/135.7 kB 9.4 MB/s eta 0:00:00
+#8 9.618 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#8 9.731 Installing collected packages: urllib3, six, jmespath, python-dateutil, botocore, s3transfer, boto3
+#8 10.17 Successfully installed boto3-1.35.36 botocore-1.35.99 jmespath-1.1.0 python-dateutil-2.9.0.post0 s3transfer-0.10.4 six-1.17.0 urllib3-2.8.0
+#8 10.17 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#8 10.79 
+#8 10.79 [notice] A new release of pip is available: 24.0 -> 26.3
+#8 10.79 [notice] To update, run: pip install --upgrade pip
+#8 DONE 11.0s
+
+#9 [5/7] COPY worker/worker.py worker/clean.py worker/verify_shards.py ./
+#9 DONE 0.0s
+
+#10 [6/7] COPY prompts/teacher_prompt.txt ./teacher_prompt.txt
+#10 DONE 0.0s
+
+#11 [7/7] COPY data/schema.json ./schema.json
+#11 DONE 0.0s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 1.0s done
+#12 exporting manifest sha256:cb1197f6f4f86d0807ca7d632a748ae886740cc6fdf915a4b99ce433d6779379 done
+#12 exporting config sha256:5ce9b0e2844c0aaf897bcb5ec9418b94b68fbf953b07fcd863c29eba712c60a5 done
+#12 exporting attestation manifest sha256:e31a91426e0b6e62921cb63e54542ceed7f320d58810c56971a3c869de850151 done
+#12 exporting manifest list sha256:fe0a33e90fa6a4a9479df38721ea1992b388f177c670b07df5bfd28d9914a76e done
+#12 naming to docker.io/library/cc-worker:1.0 done
+#12 unpacking to docker.io/library/cc-worker:1.0
+#12 unpacking to docker.io/library/cc-worker:1.0 0.4s done
+#12 DONE 1.5s
+k3d image import cc-worker:1.0 -c cc-mini
+[36mINFO[0m[0000] Importing image(s) into cluster 'cc-mini'    
+[36mINFO[0m[0000] Saving 1 image(s) from runtime...            
+[36mINFO[0m[0002] Importing images into nodes...               
+[36mINFO[0m[0002] Importing images from tarball '/k3d/images/k3d-cc-mini-images-20261109024715.tar' into node 'k3d-cc-mini-server-0'... 
+[36mINFO[0m[0006] Removing the tarball(s) from image volume... 
+[36mINFO[0m[0007] Removing k3d-tools node...                   
+[36mINFO[0m[0008] Successfully imported image(s)               
+[36mINFO[0m[0008] Successfully imported 1 image(s) into 1 cluster(s) 

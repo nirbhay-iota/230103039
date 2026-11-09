@@ -1,0 +1,42 @@
+{
+  "scope": "partial locally saved shards; not the complete labelling run or validation set",
+  "pool_records": 3000,
+  "saved_records": 250,
+  "coverage_percent": 8.333333333333334,
+  "json_parseable_records": 124,
+  "json_parseable_percent": 49.6,
+  "retained_percent": 44.8,
+  "counts": {
+    "input_records": 250,
+    "a_invalid_json": 126,
+    "b_bad_keys": 0,
+    "c_bad_intent": 1,
+    "d_bad_slot": 11,
+    "duplicates": 0,
+    "kept": 112
+  },
+  "partial_clean_sha256": "74c6e325f01a379e3ad33b206549f94c12e72166819dc7b0255711c34b7aef0f",
+  "shard_verification_problems": [
+    "2750 ids are missing, e.g. ['C0251', 'C0252', 'C0253', 'C0254', 'C0255']"
+  ],
+  "sources": [
+    {
+      "path": "data/teacher/shard-0.jsonl",
+      "records": 125,
+      "sha256": "c5728d3e52cb76a3de6d2221c498fe6cbc729501c691a365ea6cf9b2aff76905"
+    },
+    {
+      "path": "data/teacher/shard-1.jsonl",
+      "records": 125,
+      "sha256": "dbd8a3911c0984854cc55506d6ddafe67e823ca5ce96656be03e1c8c0aee67ad"
+    }
+  ],
+  "cost_assumptions": {
+    "currency": "INR",
+    "replicas": 2,
+    "cpu_limit_per_replica": 1,
+    "memory_limit_gib_per_replica": 1,
+    "hourly_per_replica": 3.95,
+    "hourly_two_replicas": 7.9
+  }
+}

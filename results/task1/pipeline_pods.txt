@@ -1,0 +1,6 @@
+NAME                          STATUS    COMPLETIONS   DURATION   AGE   CONTAINERS   IMAGES          SELECTOR
+job.batch/teacher-labelling   Running   0/2           49m        49m   worker       cc-worker:1.0   batch.kubernetes.io/controller-uid=162986cb-2c7f-4cea-9dc2-04b29a07c309
+
+NAME                            READY   STATUS    RESTARTS      AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+pod/teacher-labelling-0-xb997   1/1     Running   1 (42m ago)   49m   10.42.0.11   k3d-cc-mini-server-0   <none>           <none>
+pod/teacher-labelling-1-zvwrt   1/1     Running   1 (42m ago)   49m   10.42.0.12   k3d-cc-mini-server-0   <none>           <none>

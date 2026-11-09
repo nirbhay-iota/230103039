@@ -1,0 +1,8 @@
+NAME                         READY   AGE
+statefulset.apps/seaweedfs   1/1     56m
+
+NAME              READY   STATUS    RESTARTS   AGE
+pod/seaweedfs-0   1/1     Running   0          56m
+
+NAME                TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+service/seaweedfs   NodePort   10.43.163.167   <none>        8333:30333/TCP   56m

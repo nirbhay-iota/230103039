@@ -1,0 +1,116 @@
+{
+    "apiVersion": "batch/v1",
+    "kind": "Job",
+    "metadata": {
+        "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"batch/v1\",\"kind\":\"Job\",\"metadata\":{\"annotations\":{},\"name\":\"teacher-labelling\",\"namespace\":\"pipeline\"},\"spec\":{\"backoffLimit\":6,\"completionMode\":\"Indexed\",\"completions\":2,\"parallelism\":2,\"template\":{\"metadata\":{\"labels\":{\"app\":\"teacher-worker\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"SHARD_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.annotations['batch.kubernetes.io/job-completion-index']\"}}},{\"name\":\"SHARD_COUNT\",\"value\":\"2\"},{\"name\":\"S3_ENDPOINT\",\"value\":\"http://seaweedfs.data.svc.cluster.local:8333\"},{\"name\":\"OLLAMA_URL\",\"value\":\"http://host.k3d.internal:11434\"},{\"name\":\"TEACHER_MODEL\",\"value\":\"phi3.5\"}],\"envFrom\":[{\"secretRef\":{\"name\":\"s3-credentials\"}}],\"image\":\"cc-worker:1.0\",\"imagePullPolicy\":\"IfNotPresent\",\"name\":\"worker\",\"resources\":{\"limits\":{\"cpu\":\"500m\",\"memory\":\"256Mi\"},\"requests\":{\"cpu\":\"50m\",\"memory\":\"64Mi\"}}}],\"restartPolicy\":\"OnFailure\"}}}}\n"
+        },
+        "creationTimestamp": "2026-11-08T21:17:31Z",
+        "generation": 1,
+        "labels": {
+            "app": "teacher-worker",
+            "batch.kubernetes.io/controller-uid": "162986cb-2c7f-4cea-9dc2-04b29a07c309",
+            "batch.kubernetes.io/job-name": "teacher-labelling",
+            "controller-uid": "162986cb-2c7f-4cea-9dc2-04b29a07c309",
+            "job-name": "teacher-labelling"
+        },
+        "name": "teacher-labelling",
+        "namespace": "pipeline",
+        "resourceVersion": "5741",
+        "uid": "162986cb-2c7f-4cea-9dc2-04b29a07c309"
+    },
+    "spec": {
+        "backoffLimit": 6,
+        "completionMode": "Indexed",
+        "completions": 2,
+        "manualSelector": false,
+        "parallelism": 2,
+        "podReplacementPolicy": "TerminatingOrFailed",
+        "selector": {
+            "matchLabels": {
+                "batch.kubernetes.io/controller-uid": "162986cb-2c7f-4cea-9dc2-04b29a07c309"
+            }
+        },
+        "suspend": false,
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app": "teacher-worker",
+                    "batch.kubernetes.io/controller-uid": "162986cb-2c7f-4cea-9dc2-04b29a07c309",
+                    "batch.kubernetes.io/job-name": "teacher-labelling",
+                    "controller-uid": "162986cb-2c7f-4cea-9dc2-04b29a07c309",
+                    "job-name": "teacher-labelling"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "SHARD_INDEX",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.annotations['batch.kubernetes.io/job-completion-index']"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "SHARD_COUNT",
+                                "value": "2"
+                            },
+                            {
+                                "name": "S3_ENDPOINT",
+                                "value": "http://seaweedfs.data.svc.cluster.local:8333"
+                            },
+                            {
+                                "name": "OLLAMA_URL",
+                                "value": "http://host.k3d.internal:11434"
+                            },
+                            {
+                                "name": "TEACHER_MODEL",
+                                "value": "phi3.5"
+                            }
+                        ],
+                        "envFrom": [
+                            {
+                                "secretRef": {
+                                    "name": "s3-credentials"
+                                }
+                            }
+                        ],
+                        "image": "cc-worker:1.0",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "worker",
+                        "resources": {
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "256Mi"
+                            },
+                            "requests": {
+                                "cpu": "50m",
+                                "memory": "64Mi"
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File"
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "OnFailure",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+            }
+        }
+    },
+    "status": {
+        "active": 1,
+        "completedIndexes": "0",
+        "ready": 1,
+        "startTime": "2026-11-08T21:17:31Z",
+        "succeeded": 1,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+    }
+}

@@ -1,14 +1,24 @@
 # What you still have to do yourself
 
+## Current progress — 9 November 2026
+
+Model work stopped at the user's request. Docker is stopped and the Ollama model/server were stopped;
+the Job suspension could not be confirmed because the Kubernetes API was unavailable. Do not restart model
+work without a new request. Installed tools, Python setup, 36 unit tests, lint and the earlier secret scan
+are complete. Portability fixes are in commit `2df127b`. See `results/current_results.md` for the actual results:
+250 locally saved raw replies, 112 retained after offline cleaning, 6/6 NACL sample checks, and a hypothetical
+INR 7.90/hour for two configured replicas. These are partial results. Training, model releases, validation,
+service experiments, CI runs, and submission remain pending.
+
 The code, manifests, scripts, CI, docs and the whole of Task 5 are written. What is left needs your laptop
-(Docker, k3d, Ollama, PyTorch) or your accounts. **Nothing under `results/` exists yet except `nacl_check.txt`:
+(Docker, k3d, Ollama, PyTorch) or your accounts. **Some setup and partial-data evidence now exists in `results/`:
 do not write numbers into the report that did not come from a run.** Delete this file before the final tag if you like.
 
 ## 0. Once
 - [ ] Install Docker, k3d, kubectl, Ollama, GitHub CLI (`gh auth login`), Python 3.11+, make. Give Docker >= 6 GB RAM.
 - [ ] `ollama pull phi3.5`, then run the server as `OLLAMA_HOST=0.0.0.0 ollama serve` (Pods reach it via `host.k3d.internal`).
-- [ ] Check the repository name: you typed `230203039` but the repository that exists is `230103039`.
-- [ ] `make setup`
+- [x] Check the repository name: you typed `230203039` but the repository that exists is `230103039`.
+- [x] `make setup`
 
 ## 1. Task 1: labelling (start early; hours on CPU)
 - [ ] `make cluster seed-storage image-worker` (not `make up`: the model Releases do not exist yet)
