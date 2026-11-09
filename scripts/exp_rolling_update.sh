@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-# Task 4.5: rolling update v1 -> v2 under load, then rollback with `kubectl rollout undo`.
-# Needs both models in object storage (make restore-models) and the app deployed.
 source "$(dirname "$0")/_common.sh"
-kubectl -n $NS delete hpa parser --ignore-not-found      # keep the replica count fixed during the experiment
+kubectl -n $NS delete hpa parser --ignore-not-found
 kubectl -n $NS scale deploy/parser --replicas=2
 wait_ready 2
 start_load rolling 4m

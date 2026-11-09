@@ -1,6 +1,3 @@
-# SeaweedFS (master + volume + filer + S3 gateway in one process) for object storage.
-# The S3 identity file comes from the Secret "seaweedfs-s3-config", which
-# scripts/gen-secrets.sh creates at deploy time. No credentials are stored in Git.
 apiVersion: v1
 kind: Service
 metadata:

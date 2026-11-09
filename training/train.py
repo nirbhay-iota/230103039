@@ -111,7 +111,7 @@ def main():
         sys.exit(f"unknown run {a.run!r}; config.yaml defines {sorted(cfg['runs'])}")
     seed, epochs = cfg["runs"][a.run]["seed"], cfg["runs"][a.run]["epochs"]
     if a.subset:
-        epochs = min(epochs, 2)  # a smoke test only has to show that the loop runs
+        epochs = min(epochs, 2)
 
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer

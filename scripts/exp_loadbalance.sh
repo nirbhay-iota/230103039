@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Task 4.8 and Task 7: the standard load test through the Ingress with exactly two Ready replicas.
-# Samples `kubectl top pods` while the test runs.
 source "$(dirname "$0")/_common.sh"
 kubectl -n $NS delete hpa parser --ignore-not-found
 kubectl -n $NS scale deploy/parser --replicas=2

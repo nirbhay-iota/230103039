@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Start or stop a background port-forward to the SeaweedFS S3 gateway (localhost:8333).
 set -euo pipefail
 PIDFILE="${TMPDIR:-/tmp}/cc-mini-s3-pf.pid"
 case "${1:-}" in

@@ -1,5 +1,5 @@
 line-length = 120
-extend-exclude = ["tools"]   # provided kit files, unchanged
+extend-exclude = ["tools"]
 
 [lint]
 select = ["E", "F", "W"]

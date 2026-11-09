@@ -1,7 +1,3 @@
-# Local single-node Kubernetes cluster for the whole project.
-#   k3d cluster create --config cluster/k3d.yaml
-# Host port 8080 maps to Traefik (port 80 in the cluster), so the service is
-# reachable at http://localhost:8080/parse, which is what the Locust command uses.
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 metadata:

@@ -30,7 +30,7 @@ def api(monkeypatch):
     monkeypatch.setenv("HOSTNAME", "pod-abc")
     monkeypatch.delenv("FAULT_INJECT", raising=False)
     import app as appmod
-    monkeypatch.setattr(appmod, "load_model_blocking", lambda: None)  # do not download anything
+    monkeypatch.setattr(appmod, "load_model_blocking", lambda: None)
     appmod.state.runner = None
     with TestClient(appmod.app) as client:
         yield client, appmod

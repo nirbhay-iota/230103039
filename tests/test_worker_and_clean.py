@@ -27,7 +27,7 @@ def test_sharding_uses_line_number_remainder():
     shard1 = [n for n, _ in worker.shard_records(lines, 1, 3)]
     shard2 = [n for n, _ in worker.shard_records(lines, 2, 3)]
     assert shard0 == [0, 3, 6, 9] and shard1 == [1, 4, 7] and shard2 == [2, 5, 8]
-    assert sorted(shard0 + shard1 + shard2) == list(range(10))  # no gaps, no repeats
+    assert sorted(shard0 + shard1 + shard2) == list(range(10))
 
 
 def test_real_pool_is_partitioned_exactly():
@@ -67,8 +67,8 @@ def test_each_rejection_rule():
 def test_counts_add_up_and_smallest_id_wins_and_sorted():
     records = [
         rec(5, "what is the weather in london", GOOD),
-        rec(2, "what is the weather in london", GOOD),      # duplicate: id 2 must be kept
-        rec(9, "what is the weather in london", "garbage"),  # rejected by (a), not counted as duplicate
+        rec(2, "what is the weather in london", GOOD),
+        rec(9, "what is the weather in london", "garbage"),
         rec(1, "what time is it in tokyo", '{"intent": "datetime_query", "date": null, "time": null, "place": "tokyo"}'),
         rec(7, "hello", '{"intent": "nope", "date": null, "time": null, "place": null}'),
     ]
@@ -133,6 +133,6 @@ def test_ask_teacher_sends_fixed_settings_and_returns_exact_reply():
         out = worker.ask_teacher(f"http://127.0.0.1:{server.server_port}", "phi3.5", "PROMPT")
     finally:
         server.shutdown()
-    assert out == ' {"intent": "x"}\n\n'  # stored exactly as generated, whitespace included
+    assert out == ' {"intent": "x"}\n\n'
     assert seen["path"] == "/api/generate" and seen["model"] == "phi3.5" and seen["stream"] is False
     assert seen["options"]["temperature"] == 0 and seen["options"]["seed"] == 42

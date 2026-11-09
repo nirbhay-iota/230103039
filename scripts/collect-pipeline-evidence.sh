@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Save evidence for Task 1 (workers ran at the same time, in namespace pipeline, with different shards).
 set -euo pipefail
 out=results/task1
 mkdir -p "$out"

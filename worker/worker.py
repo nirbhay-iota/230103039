@@ -41,7 +41,6 @@ def shard_records(lines, shard_index, shard_count):
 
 
 def build_prompt(template, command):
-    # str.replace, not str.format: the template contains literal JSON braces.
     return template.replace("{command}", command)
 
 
@@ -58,7 +57,7 @@ def ask_teacher(ollama_url, model, prompt, retries=5):
             req = urllib.request.Request(f"{ollama_url}/api/generate", data=payload,
                                          headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=600) as resp:
-                return json.loads(resp.read())["response"]  # stored exactly as generated
+                return json.loads(resp.read())["response"]
         except (urllib.error.URLError, TimeoutError, KeyError, json.JSONDecodeError) as exc:
             if attempt == retries:
                 raise

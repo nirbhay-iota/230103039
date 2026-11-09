@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# Create the S3 credentials as Kubernetes Secrets (random per cluster, never written to Git).
-#   data/seaweedfs-s3-config  : identity file read by the SeaweedFS S3 gateway
-#   pipeline/s3-credentials   : AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY for the workers
-#   app/s3-credentials        : the same, for the inference service
-# Idempotent: does nothing if the secrets already exist.
 set -euo pipefail
 
 if kubectl -n data get secret seaweedfs-s3-config >/dev/null 2>&1; then

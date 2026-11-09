@@ -1,5 +1,3 @@
-# Teacher-labelling worker. Build from the repository root:
-#   docker build -f worker/Dockerfile -t cc-worker:1.0 .
 FROM python:3.11.9-slim
 WORKDIR /app
 COPY worker/requirements.txt .

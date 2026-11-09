@@ -1,31 +1,24 @@
-# Everything `make train` needs. The training script reads only this file (plus the data it points to).
-# `make train`                -> run v1
-# `make train RUN=v2`         -> run v2 (different seed, one more epoch)
-# `make train SUBSET=50`      -> first 50 records only, to check that training runs end to end
 
 base_model: EleutherAI/pythia-70m
-train_file: data/v1/train.jsonl     # cleaned teacher data from Task 1 (SHA-256 in data/v1/train.sha256)
-max_train_examples: 1500            # the first 1,500 records of train.jsonl, as required
+train_file: data/v1/train.jsonl
+max_train_examples: 1500
 
-# The six items the assignment asks to be recorded
 learning_rate: 3.0e-4
 batch_size: 16
 max_seq_len: 128
 runs:
   v1: {seed: 42, epochs: 5}
-  v2: {seed: 43, epochs: 6}         # another seed and one more epoch
+  v2: {seed: 43, epochs: 6}
 
-# Other training settings
 weight_decay: 0.0
 warmup_ratio: 0.05
 max_grad_norm: 1.0
-loss_on_prompt: false               # loss only on the teacher's JSON, not on "Command: ..."
+loss_on_prompt: false
 
-output_root: artifacts              # model written to artifacts/<run>/ (never committed)
-loss_csv: training/loss.csv         # run,epoch,train_loss  (one row per epoch)
+output_root: artifacts
+loss_csv: training/loss.csv
 subset_loss_csv: training/loss_subset.csv
 
-# Library versions (pinned in requirements-train.txt; train.py warns if the installed ones differ)
 library_versions:
   python: "3.11"
   torch: "2.4.1"

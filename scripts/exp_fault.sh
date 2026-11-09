@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Task 3 evidence: FAULT_INJECT=1 makes /parse return 500 {"error": "invalid_model_output"}.
 source "$(dirname "$0")/_common.sh"
 OUT=results/task3; mkdir -p "$OUT"
 kubectl -n $NS set env deploy/parser FAULT_INJECT=1

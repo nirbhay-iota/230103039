@@ -1,12 +1,9 @@
-# Helpers for the experiment scripts (sourced, not executed).
 set -euo pipefail
 NS=app
 HOST="${HOST:-http://localhost:8080}"
 OUT="${OUT:-results/task4}"
 mkdir -p "$OUT"
 
-# Start Locust in the background with the standard settings but a custom run time and output prefix.
-#   start_load PREFIX RUNTIME [USERS]
 start_load() {
   local prefix="$1" runtime="$2" users="${3:-4}"
   LOADTEST_HEADERS_OUT="$OUT/${prefix}_headers.json" .venv/bin/locust -f tools/locustfile.py --headless \
@@ -15,9 +12,8 @@ start_load() {
   LOAD_PID=$!
 }
 
-wait_load() { wait "$LOAD_PID" || true; }   # Locust exits 1 if any request failed; that is not an error here
+wait_load() { wait "$LOAD_PID" || true; }
 
-# Print "requests failures failure_percent" from a Locust stats CSV.
 load_summary() {
   python3 - "$1" <<'PY'
 import csv, sys
@@ -31,7 +27,7 @@ PY
 
 ready_count() { kubectl -n "$NS" get deploy parser -o jsonpath='{.status.readyReplicas}' 2>/dev/null | sed 's/^$/0/'; }
 
-wait_ready() {  # wait_ready COUNT [TIMEOUT_SECONDS]
+wait_ready() {
   local want="$1" t="${2:-600}" s=0
   until [ "$(ready_count)" = "$want" ] && [ "$(kubectl -n $NS get deploy parser -o jsonpath='{.status.replicas}')" = "$want" ]; do
     sleep 2; s=$((s + 2)); [ "$s" -ge "$t" ] && { echo "timeout waiting for $want ready replicas" >&2; return 1; }

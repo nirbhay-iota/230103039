@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Task 4.6: delete one Pod under load; Kubernetes must bring the replica count back.
 source "$(dirname "$0")/_common.sh"
 kubectl -n $NS delete hpa parser --ignore-not-found
 kubectl -n $NS scale deploy/parser --replicas=2

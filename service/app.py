@@ -37,7 +37,7 @@ class State:
     def __init__(self):
         self.runner = None
         self.error = None
-        self.lock = threading.Lock()  # one generation at a time per replica
+        self.lock = threading.Lock()
 
 
 state = State()
@@ -53,14 +53,13 @@ def load_model_blocking():
         n = download_model(os.environ["MODEL_URI"], os.environ["S3_ENDPOINT"], dest)
         state.runner = ModelRunner(dest, int(os.environ.get("MAX_NEW_TOKENS", "96")))
         log.info("model %s ready: %d files, %.1fs since start", os.environ.get("MODEL_VERSION"), n, time.time() - started)
-    except Exception as exc:  # keep the process alive so /healthz stays 200 and the Pod is simply not Ready
+    except Exception as exc:
         state.error = repr(exc)
         log.exception("model loading failed")
 
 
 @asynccontextmanager
 async def lifespan(app):
-    # Load in the background so that /healthz answers while /readyz still says 503.
     threading.Thread(target=load_model_blocking, daemon=True).start()
     yield
 
@@ -73,7 +72,7 @@ class ParseRequest(BaseModel):
 
 
 def pod_name():
-    return os.environ.get("HOSTNAME", "unknown")  # Kubernetes sets HOSTNAME to the Pod name
+    return os.environ.get("HOSTNAME", "unknown")
 
 
 @app.get("/healthz")

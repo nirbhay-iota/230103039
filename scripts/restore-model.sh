@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Download model-<RUN> from the GitHub Release, verify its checksum, and upload it to the models bucket.
-#   scripts/restore-model.sh v1
-# This is how `make up` fills object storage on a fresh clone (weights are never stored in Git).
 set -euo pipefail
 RUN="${1:?usage: restore-model.sh RUN}"
 REPO="${REPO:-$(git config --get remote.origin.url | sed -E 's#(git@github.com:|https://github.com/)##; s#\.git$##')}"

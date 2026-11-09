@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Task 4.2 evidence: while the model is still loading, the Service has no ready endpoints.
 source "$(dirname "$0")/_common.sh"
 kubectl -n $NS delete hpa parser --ignore-not-found
 kubectl -n $NS scale deploy/parser --replicas=0

@@ -12,8 +12,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1          # start a new Pod first ...
-      maxUnavailable: 0    # ... and never remove a Ready Pod until its replacement is Ready
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels: {app: parser}
@@ -39,17 +39,17 @@ spec:
               value: "0"
           envFrom:
             - secretRef:
-                name: s3-credentials   # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY, created by scripts/gen-secrets.sh
+                name: s3-credentials
           resources:
             requests: {cpu: 500m, memory: 512Mi}
             limits: {cpu: "1", memory: 1Gi}
-          livenessProbe:             # restart the container only if the process is stuck
+          livenessProbe:
             httpGet: {path: /healthz, port: http}
             initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
-          readinessProbe:            # receive traffic only once the model is loaded (503 before that)
+          readinessProbe:
             httpGet: {path: /readyz, port: http}
             initialDelaySeconds: 5
             periodSeconds: 3

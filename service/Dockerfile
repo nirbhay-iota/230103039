@@ -1,6 +1,3 @@
-# Inference service. Build from the repository root with ONE command:
-#   docker build -f service/Dockerfile -t cc-parser:1.0 .
-# The image contains no model weights: the model is downloaded from object storage at start-up.
 FROM python:3.11.9-slim
 
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1 \

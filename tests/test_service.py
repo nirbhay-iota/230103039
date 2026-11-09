@@ -23,11 +23,11 @@ def test_valid_output_is_accepted_and_keys_are_ordered():
 
 @pytest.mark.parametrize("raw", [
     "not json",
-    '{"intent": "alarm_set", "date": "tomorrow", "time": "seven am"',            # cut off
-    '{"intent": "alarm_set", "date": null, "time": null}',                        # missing key
-    '{"intent": "alarm_set", "date": null, "time": null, "place": null, "x": 1}',  # extra key
-    '{"intent": "play_music", "date": null, "time": null, "place": null}',        # unknown intent
-    '{"intent": "alarm_set", "date": 5, "time": null, "place": null}',            # wrong type
+    '{"intent": "alarm_set", "date": "tomorrow", "time": "seven am"',
+    '{"intent": "alarm_set", "date": null, "time": null}',
+    '{"intent": "alarm_set", "date": null, "time": null, "place": null, "x": 1}',
+    '{"intent": "play_music", "date": null, "time": null, "place": null}',
+    '{"intent": "alarm_set", "date": 5, "time": null, "place": null}',
     "[1, 2, 3]",
     "",
 ])

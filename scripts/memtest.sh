@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Task 3: send 50 requests, one after another, to the container running with 1 CPU and 1 GiB,
-# and report the peak memory. Needs the cluster running (object storage) and the image built.
-#   scripts/memtest.sh [RUN=v1]
 set -euo pipefail
 RUN="${1:-v1}"
 OUT=results/task3
@@ -10,7 +7,6 @@ scripts/pf.sh start
 eval "$(scripts/s3env.sh)"
 
 docker rm -f cc-parser-memtest >/dev/null 2>&1 || true
-# Use the cluster network to reach S3 on both Linux and Docker Desktop.
 docker run -d --name cc-parser-memtest --network k3d-cc-mini -p 127.0.0.1:8000:8000 --cpus=1 --memory=1g --memory-swap=1g \
   -e MODEL_URI="s3://models/${RUN}/" -e MODEL_VERSION="${RUN}" -e S3_ENDPOINT="http://k3d-cc-mini-server-0:30333" \
   -e MAX_NEW_TOKENS=96 -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \

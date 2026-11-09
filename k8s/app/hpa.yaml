@@ -1,5 +1,3 @@
-# Autoscaling on CPU (metrics-server is built into k3s). The scale-down window is shortened from the
-# default 5 minutes to 60 seconds so that the scale-down is visible within a test session.
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

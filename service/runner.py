@@ -7,13 +7,13 @@ from prompt import build_prompt
 def cpu_limit():
     """CPU cores this process may use (cgroup quota when running in a container)."""
     try:
-        quota, period = open("/sys/fs/cgroup/cpu.max").read().split()  # cgroup v2
+        quota, period = open("/sys/fs/cgroup/cpu.max").read().split()
         if quota != "max":
             return max(1, round(int(quota) / int(period)))
     except (OSError, ValueError):
         pass
     try:
-        quota = int(open("/sys/fs/cgroup/cpu/cpu.cfs_quota_us").read())  # cgroup v1
+        quota = int(open("/sys/fs/cgroup/cpu/cpu.cfs_quota_us").read())
         period = int(open("/sys/fs/cgroup/cpu/cpu.cfs_period_us").read())
         if quota > 0:
             return max(1, round(quota / period))

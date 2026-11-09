@@ -1,5 +1,3 @@
-# k3s ships the Traefik ingress controller; k3d maps host port 8080 to it.
-#   curl -X POST localhost:8080/parse -H 'Content-Type: application/json' -d '{"text": "what is the weather in london"}'
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

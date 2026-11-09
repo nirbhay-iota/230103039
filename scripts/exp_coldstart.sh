@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Task 4.7: delete all Pods three times; report Pod-creation-to-Ready time and the download log lines.
 source "$(dirname "$0")/_common.sh"
 kubectl -n $NS delete hpa parser --ignore-not-found
 kubectl -n $NS scale deploy/parser --replicas=2
@@ -27,7 +26,6 @@ rows = [l.split() for l in open(sys.argv[1]) if l.strip()]
 per_run = {}
 for run, _pod, secs in rows:
     per_run.setdefault(run, []).append(int(secs))
-# One cold-start time per run: the slowest of the two Pods (when the whole service is back).
 times = [max(v) for _, v in sorted(per_run.items())]
 print("cold-start time per run (slowest Pod, seconds):", times)
 print("median of three runs (seconds):", statistics.median(times))

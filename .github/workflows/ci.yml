@@ -20,7 +20,6 @@ permissions:
   contents: read
 
 jobs:
-  # Stage 1: linting
   lint:
     runs-on: ubuntu-24.04
     steps:
@@ -39,7 +38,6 @@ jobs:
               print("ok", f)
           PY
 
-  # Stage 2: unit tests (more than three; they need no GPU, model, or cluster)
   unit-tests:
     needs: lint
     runs-on: ubuntu-24.04
@@ -50,7 +48,6 @@ jobs:
       - run: pip install pytest==8.3.3 PyYAML==6.0.2 jsonschema==4.23.0 fastapi==0.115.0 httpx==0.27.2 pydantic==2.9.2 uvicorn==0.30.6 boto3==1.35.36
       - run: python -m pytest -v tests
 
-  # Stage 3: model evaluation with score.py on validation.jsonl
   evaluate-model:
     needs: unit-tests
     runs-on: ubuntu-24.04
@@ -72,7 +69,6 @@ jobs:
             ci/predictions.jsonl
             ci/report.json
 
-  # Stage 4: quality gate. Fails the workflow if JSON validity is below 95 %.
   quality-gate:
     needs: evaluate-model
     runs-on: ubuntu-24.04
@@ -83,7 +79,6 @@ jobs:
       - name: score.py --min-validity 95
         run: python tools/score.py ci/predictions.jsonl data/validation.jsonl --min-validity 95
 
-  # Secret scanning over the whole Git history; must report nothing.
   secret-scan:
     runs-on: ubuntu-24.04
     steps:
