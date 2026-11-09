@@ -1,6 +1,9 @@
 # Cloud Computing mini project: distilling and deploying a command parser
 
-Nirbhay, Roll No. 230103039 (CS3081). Status: the full implementation is in the repository; the executed and not-executed parts are listed in `report/report.pdf` (Section 9) and `results/current_results.md`.
+Nirbhay, Roll No. 230103039 (CS3081).
+
+GitHub repository: https://github.com/nirbhay-iota/230103039 (final submission commit tagged `final`: https://github.com/nirbhay-iota/230103039/tree/final)
+ Status: the full implementation is in the repository; the executed and not-executed parts are listed in `report/report.pdf` (Section 9) and `results/current_results.md`.
 
 A 70M-parameter student (EleutherAI/pythia-70m) is trained on the replies of a teacher (phi3.5 on Ollama)
 to turn a spoken command into `{"intent", "date", "time", "place"}` JSON, then served from a local
