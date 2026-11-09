@@ -16,7 +16,7 @@ training/                   config.yaml, train.py, package.py, evaluate.py, loss
 service/                    FastAPI service + Dockerfile         network/      subnets.md, nacl.json
 scripts/                    experiment and helper scripts        tests/        unit tests
 results/                    evidence: logs, score reports, Locust output
-report/report.md            report source (build: make report)   report/report.pdf  submitted report
+report/report.md            report source (build: make report)   report/report.pdf  submitted report   AI_USE.md  use of AI tools
 ```
 
 ## Requirements on the host
